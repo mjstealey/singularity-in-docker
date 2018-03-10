@@ -29,19 +29,15 @@ RUN yum -y install \
 
 # singularity
 COPY ./rpms /rpms
-RUN yum -y localinstall \
-	/rpms/singularity-runtime-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-devel-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-debuginfo-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-2.4.2-1.el7.centos.x86_64.rpm
+RUN yum -y localinstall /rpms/singularity-*
 
 # sregistry-cli
 WORKDIR /home/singularity
 RUN git clone -b development \
   https://www.github.com/singularityhub/sregistry-cli.git \
   && cd sregistry-cli \
-  && sudo python3.6 setup.py install \
   && sudo pip3.6 install -e .[all]
+#   && sudo python3.6 setup.py install \
 
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 

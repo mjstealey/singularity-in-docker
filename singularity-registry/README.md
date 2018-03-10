@@ -10,6 +10,9 @@ Github: [https://github.com/singularityhub/sregistry](https://github.com/singula
 
 The scripts provided here make use of the [singularityhub/sregistry](https://github.com/singularityhub/sregistry) source code and alter the deployment of it to be run in docker locally.
 
+The code has been tested in macOS and Linux on CentOS 7. Configuration choices may be particular depending on platform, and whether or not the hostname is DNS resolvable.
+
+
 ### Configuration
 
 The `deploy-sregistry.sh` script makes the assumption that [installation dependencies](https://singularityhub.github.io/sregistry/install) are satisfied on the local machine.
@@ -40,8 +43,8 @@ export ENABLE_GITHUB_AUTH='False'
 export ENABLE_GITLAB_AUTH='False'
 
 # DOMAIN NAMES
-export DOMAIN_NAME='http://127.0.0.1'
-export DOMAIN_NAME_HTTP='http://127.0.0.1'
+export DOMAIN_NAME='http://nginx'
+export DOMAIN_NAME_HTTP='http://nginx'
 export ADMINS_USER='mjstealey'
 export ADMINS_MAIL='mjstealey@gmail.com'
 export HELP_CONTACT_EMAIL='mjstealey@gmail.com'
@@ -56,7 +59,16 @@ export USER_COLLECTIONS='True'
 export PRIVATE_ONLY='False'
 # Should the default for a new registry be private or public?
 export DEFAULT_PRIVATE='False'
+
 ```
+
+- **NOTE**: The `DOMAIN_NAME` and `DOMAIN_NAME_HTTP` are both set to `http://nginx` in this example due to the `nginx` container being the http gatekeeper from docker's point of view. The `nginx` container translates to a docker based address on the host, for example `172.17.0.6`. 
+
+  - If the hostname is DNS resolvable, then that hostname should be used in place of of `http://nginx`
+
+- **NOTE**: The included `docker-compose.yml` file will define a mapping from the host to the nginx container for web browser interaction.
+
+  - `localhost:8080` maps to `nginx:80`
 
 ### Running
 
@@ -171,12 +183,17 @@ Token (whitespace added for readablity):
   { 
     "token": "6bc217c3afc17a3eb6056fd223937585964dd824", 
     "username": "mjstealey", 
-    "base": "http://127.0.0.1" 
+    "base": "http://nginx" 
   }
 }
 ```
 
 See section on **sregistry-cli** for example usage.
+
+
+The singularity registry also provides a RESTful API. This can be in interacted with from the site at [http://localhost:8080/api/](http://localhost:8080/api/)
+
+<img width="80%" alt="RESTful API" src="https://user-images.githubusercontent.com/5332509/37227923-d15b82be-23ac-11e8-9e93-160994478b84.png">
 
 ## Not Covered
 
