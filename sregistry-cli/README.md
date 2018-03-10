@@ -69,9 +69,9 @@ The attributes to use our local registry can be injected into the new container 
 "base"     as REGISTRY_BASE
 ```
 
-- **NOTE**: The value for **REGISTRY_BASE** may need to be altered to accomodate being run on the local host on port 8080.
+- **NOTE**: The value for **REGISTRY_BASE** may need to be altered to accomodate being run on the localhost over port 8080.   
     - **macOS**: `REGISTRY_BASE=http://docker.for.mac.localhost:8080`
-    - **Linux**: `REGISTRY_BASE=http://docker0:8080`
+    - **Linux**: `REGISTRY_BASE=http://192.168.0.1:8080` # IP of `docker0` from host
 - **NOTE**: In order to execute `singularity` calls the container needs to run with elevated privilege (`--privileged`).
 - **NOTE**: The `sregistry-cli` container may not be able to locally resolve the address `http://nginx` and the user will need to manually add this to the container's `/etc/hosts` file.
     - `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' nginx`
