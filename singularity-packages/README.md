@@ -1,16 +1,16 @@
 # Singularity Package Builder
 
-Builds the [Singularity](http://singularity.lbl.gov/install-linux) packages from their [Github source](https://github.com/singularityware/singularity) based on the tag specified as an environment variable named `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.2`)
+Builds the [Singularity](http://singularity.lbl.gov/install-linux) packages from their [Github source](https://github.com/singularityware/singularity) based on the tag specified as an environment variable named `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.4`)
 
 Supported builds (defaults shown):
 
 - CentOS 7 
-	- `singularity-2.4.2-1.el7.centos.x86_64.rpm`
-	- `singularity-debuginfo-2.4.2-1.el7.centos.x86_64.rpm`
-	- `singularity-devel-2.4.2-1.el7.centos.x86_64.rpm`
-	- `singularity-runtime-2.4.2-1.el7.centos.x86_64.rpm`
+	- `singularity-2.4.4-1.el7.centos.x86_64.rpm`
+	- `singularity-debuginfo-2.4.4-1.el7.centos.x86_64.rpm`
+	- `singularity-devel-2.4.4-1.el7.centos.x86_64.rpm`
+	- `singularity-runtime-2.4.4-1.el7.centos.x86_64.rpm`
 - Ubuntu 16.04
-	- `singularity-container_2.4.2-1_amd64.deb`
+	- `singularity-container_2.4.4-1_amd64.deb`
 
 ## CentOS 7
 
@@ -27,7 +27,7 @@ $ docker build -t singularity.rpm:latest .
 
 ### Run the image 
 
-- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.2`).
+- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.4`).
 - Specify the volume to which you'd like to save the resultant rpm files (maps to `/packages` of the container).
 
 
@@ -35,7 +35,7 @@ $ docker build -t singularity.rpm:latest .
 
 ```
 $ docker run --rm \
-	-e SINGULARITY_VERSION=2.4.2 \
+	-e SINGULARITY_VERSION=2.4.4 \
 	-v $(pwd)/rpms:/packages \
 	singularity.rpm:latest
 ```
@@ -44,10 +44,10 @@ $ docker run --rm \
 
 ```
 $ ls -alh $(pwd)/rpms
--rw-r--r--  1 xxxxx  xxxxx   241K Feb 27 16:33 singularity-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx   438K Feb 27 16:33 singularity-debuginfo-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx    65K Feb 27 16:33 singularity-devel-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx   156K Feb 27 16:33 singularity-runtime-2.4.2-1.el7.centos.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   239K Mar 11 10:50 singularity-2.4.4-1.el7.centos.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   448K Mar 11 10:50 singularity-debuginfo-2.4.4-1.el7.centos.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx    66K Mar 11 10:50 singularity-devel-2.4.4-1.el7.centos.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   159K Mar 11 10:50 singularity-runtime-2.4.4-1.el7.centos.x86_64.rpm
 ```
 
 ## Ubuntu 16.04
@@ -65,7 +65,7 @@ $ docker build -t singularity.deb:latest .
 
 ### Run the image 
 
-- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.2`).
+- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.4.4`).
 - Specify the volume to which you'd like to save the resultant deb files (maps to `/packages` of the container).
 
 
@@ -73,7 +73,7 @@ $ docker build -t singularity.deb:latest .
 
 ```
 $ docker run --rm \
-	-e SINGULARITY_VERSION=2.4.2 \
+	-e SINGULARITY_VERSION=2.4.4 \
 	-v $(pwd)/debs:/packages \
 	singularity.deb:latest
 ```
@@ -82,7 +82,7 @@ $ docker run --rm \
 
 ```
 $ ls -alh $(pwd)/debs
--rw-r--r--  1 xxxxx  xxxxx   299K Feb 27 16:38 singularity-container_2.4.2-1_amd64.deb
+-rw-r--r--  1 xxxxx  xxxxx   301K Mar 11 10:57 singularity-container_2.4.4-1_amd64.deb
 ```
 
 ## Test Singularity packages using Docker
@@ -107,10 +107,10 @@ Install the RPMs from within the container
 
 ```
 # yum -y localinstall \
-	/rpms/singularity-runtime-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-devel-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-debuginfo-2.4.2-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-2.4.2-1.el7.centos.x86_64.rpm
+	/rpms/singularity-runtime-2.4.4-1.el7.centos.x86_64.rpm \
+	/rpms/singularity-devel-2.4.4-1.el7.centos.x86_64.rpm \
+	/rpms/singularity-debuginfo-2.4.4-1.el7.centos.x86_64.rpm \
+	/rpms/singularity-2.4.4-1.el7.centos.x86_64.rpm
 ```
 
 Build the lolcow singularity image.
@@ -159,7 +159,7 @@ Install the DEB files and prerequisites from within the container.
 	ca-certificates \
 	python \
 	squashfs-tools
-# dpkg -i /debs/singularity-container_2.4.2-1_amd64.deb
+# dpkg -i /debs/singularity-container_2.4.4-1_amd64.deb
 ```
 
 Build the lolcow singularity image.

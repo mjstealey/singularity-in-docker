@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 MAINTAINER Michael J. Stealey <michael.j.stealey@gmail.com>
 
-ENV SINGULARITY_VERSION=2.4.2
+ENV SINGULARITY_VERSION=2.4.4
 
 RUN apt-get update && apt-get install -y \
   build-essential \

@@ -37,10 +37,11 @@ RUN git clone -b development \
   https://www.github.com/singularityhub/sregistry-cli.git \
   && cd sregistry-cli \
   && sudo pip3.6 install -e .[all]
-#   && sudo python3.6 setup.py install \
 
 COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 
 WORKDIR /home/singularity
 
 ENTRYPOINT ["/usr/local/bin/tini", "--", "/docker-entrypoint.sh"]
+
+CMD ["tail", "-f", "/dev/null"]

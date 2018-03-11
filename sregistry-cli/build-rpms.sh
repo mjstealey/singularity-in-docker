@@ -11,7 +11,7 @@ if [[ ! -d $(pwd)/rpms ]]; then
   mkdir -p $(pwd)/rpms
 fi
 docker run --rm \
-	-e SINGULARITY_VERSION=2.4.2 \
+	-e SINGULARITY_VERSION=2.4.4 \
 	-v $(pwd)/rpms:/packages \
 	singularity.rpm:latest
 
