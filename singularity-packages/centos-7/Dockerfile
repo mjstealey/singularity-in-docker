@@ -6,6 +6,7 @@ ENV SINGULARITY_VERSION=2.4.4
 RUN yum -y install \
   epel-release \
   git \
+  libarchive-devel \
   && yum -y groupinstall "Development Tools"
 
 WORKDIR /
