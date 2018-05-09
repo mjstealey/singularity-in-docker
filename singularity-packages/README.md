@@ -84,7 +84,7 @@ $ docker run --rm \
 ```console
 $ ls -lh $(pwd)/debs/
 total 664
--rw-r--r--  1 stealey  staff   329K May  9 08:25 singularity-container_2.5.1_amd64.deb
+-rw-r--r--  1 xxxxx  xxxxx   329K May  9 08:25 singularity-container_2.5.1_amd64.deb
 ```
 
 ## Test Singularity packages using Docker
