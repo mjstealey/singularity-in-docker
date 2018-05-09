@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
   debhelper \
   dh-autoreconf \
   help2man \
-  python
+  python \
+  libarchive-dev
 
 WORKDIR /
 
