@@ -75,19 +75,19 @@ export DEFAULT_PRIVATE='False'
 Execute the `deploy-sregistry.sh` from the `singularity-registry` directory.
 
 ```
-$ ./deploy-sregistry.sh
+./deploy-sregistry.sh
 ```
 
 On completion you should have five containers running as detailed below.
 
 ```
 $ docker ps
-CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
-5b25be9c3e4c        nginx               "nginx -g 'daemon of…"   About an hour ago   Up About an hour    0.0.0.0:8080->80/tcp     nginx
-e06894c467ac        vanessa/sregistry   "celery worker -A sh…"   About an hour ago   Up About an hour    3031/tcp                 worker
-5580644ec289        vanessa/sregistry   "/bin/sh -c /code/ru…"   About an hour ago   Up About an hour    3031/tcp                 uwsgi
-cb22b3c884a5        postgres            "docker-entrypoint.s…"   About an hour ago   Up About an hour    5432/tcp                 db
-d6c1f7d375a4        redis:latest        "docker-entrypoint.s…"   About an hour ago   Up About an hour    0.0.0.0:6379->6379/tcp   redis
+CONTAINER ID        IMAGE                     COMMAND                  CREATED             STATUS              PORTS                           NAMES
+eacb058a9282        vanessa/sregistry_nginx   "nginx -g 'daemon of…"   2 minutes ago       Up 2 minutes        443/tcp, 0.0.0.0:8080->80/tcp   nginx
+d2ac37c97d36        vanessa/sregistry         "celery worker -A sh…"   7 minutes ago       Up 2 minutes        3031/tcp                        worker
+0de9cb4ed873        vanessa/sregistry         "/bin/sh -c /code/ru…"   7 minutes ago       Up 2 minutes        3031/tcp                        uwsgi
+723f71b6aa68        postgres                  "docker-entrypoint.s…"   7 minutes ago       Up 2 minutes        5432/tcp                        db
+cb561d82e323        redis:latest              "docker-entrypoint.s…"   7 minutes ago       Up 2 minutes        0.0.0.0:6379->6379/tcp          redis
 ```
 
 After a few moments your local Singularity Registry will be accessible at [http://localhost:8080/](http://localhost:8080/)
@@ -100,7 +100,7 @@ Since the sregistry code is [Django](https://www.djangoproject.com) based it is 
 
 - If we were to try using the **Login** link now, it would be blank since no third part OAuth clients were configured. This document will not cover adding users from OAuth services and is left for the user to research on their own 
 
-To see what options are available from `manage.py`, run `$ docker exec uwsgi python manage.py help`
+To see what options are available from `manage.py`, run `docker exec uwsgi python manage.py help`
 
 We'll be interested in the following options:
 
@@ -131,9 +131,9 @@ Create a superuser account, provide **admin** and **superuser** access
 
 ### createsuperuser
 
-```
+```console
 $ docker exec -ti uwsgi \
-    python manage.py createsuperuser --username mjstealey
+  python manage.py createsuperuser --username mjstealey
 Email address: mjstealey@gmail.com
 Password: ********
 Password (again): ********
@@ -144,7 +144,7 @@ Superuser created successfully.
 
 ```
 $ docker exec -ti uwsgi \
-    python manage.py add_admin --username mjstealey
+  python manage.py add_admin --username mjstealey
 DEBUG Username: mjstealey
 CommandError: This user can already manage and build.
 ```
@@ -154,7 +154,7 @@ CommandError: This user can already manage and build.
 
 ```
 $ docker exec -ti uwsgi \
-    python manage.py add_superuser --username mjstealey
+  python manage.py add_superuser --username mjstealey
 DEBUG Username: mjstealey
 DEBUG mjstealey is now a superuser.
 ```

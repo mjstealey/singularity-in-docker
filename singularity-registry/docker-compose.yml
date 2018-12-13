@@ -16,7 +16,7 @@ uwsgi:
 
 nginx:
   restart: always
-  image: nginx
+  image: vanessa/sregistry_nginx
   container_name: nginx
   ports:
     - "8080:80"
@@ -35,7 +35,6 @@ redis:
   container_name: redis
   ports:
     - "6379:6379"
-
 
 worker:
   image: vanessa/sregistry
