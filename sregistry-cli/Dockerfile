@@ -3,11 +3,12 @@ MAINTAINER Michael J. Stealey <michael.j.stealey@gmail.com>
 
 ENV USER_UID=1000 \
   USER_GID=1000 \
-  SINGULARITY_VERSION=2.4.2 \
+  SINGULARITY_VERSION=2.6.1 \
   PYTHON_VERSION=3.6 \
   REGISTRY_TOKEN='' \
   REGISTRY_USERNAME='' \
-  REGISTRY_BASE=''
+  REGISTRY_BASE='' \
+  BRANCH='master'
 
 # set user/group IDs for singularity user account
 RUN groupadd -r singularity --gid=$USER_GID \
@@ -33,7 +34,7 @@ RUN yum -y localinstall /rpms/singularity-*
 
 # sregistry-cli
 WORKDIR /home/singularity
-RUN git clone -b development \
+RUN git clone -b ${BRANCH} \
   https://www.github.com/singularityhub/sregistry-cli.git \
   && cd sregistry-cli \
   && sudo pip3.6 install -e .[all]

@@ -28,16 +28,6 @@ EOF
   chown ${USER_UID}:${USER_GID} $OUTFILE
 }
 
-### NOTE: moved install of sregistry-cli to Dockerfile ###
-# install sregistry-cli
-_install_sregistry_cli() {
-  runuser -l singularity -c 'cd ${HOME};
-    git clone -b development https://www.github.com/singularityhub/sregistry-cli.git;
-    cd ${HOME}/sregistry-cli;
-    sudo python3.6 setup.py install;
-    sudo pip3.6 install -e .[all]'
-}
-
 _update_uid_gid() {
   # if USER_UID < 1000 or USER_GID < 1000, exit with error message
   if [[ ${USER_UID} < 1000 ]] || [[ ${USER_GID} < 1000 ]]; then
@@ -54,7 +44,6 @@ _update_uid_gid() {
 ### main ###
 _sudoers_d
 _update_uid_gid
-# _install_sregistry_cli
 _generate_sregistry
 
 exec "$@"

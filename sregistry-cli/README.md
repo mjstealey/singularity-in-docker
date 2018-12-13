@@ -9,16 +9,19 @@ The container will contain the following environment variables by default:
 ```
 USER_UID=1000
 USER_GID=1000
-SINGULARITY_VERSION=2.4.2
+SINGULARITY_VERSION=2.6.1
 PYTHON_VERSION=3.6
 REGISTRY_TOKEN=''
 REGISTRY_USERNAME=''
 REGISTRY_BASE=''
+BRANCH='master'
 ```
 
 The `USER_UID=1000` and `USER_GID=1000` variables can be used to change the **UID** and/or **GID** that the user named **singularity** runs as. It can be benefitial to match the UID and GID of the local user running the container for permissions reasons.
 
 The `REGISTRY_TOKEN`, `REGISTRY_USERNAME` and `REGISTRY_BASE` variables are used to set a default `${HOME}/.sregistry` file for the singularity user which will allow **sregistry-cli** interaction with the defined registry.
+
+The `BRANCH` variable determines which branch of the **sregistry-cli** repository gets checked out and built from.
 
 ## Usage
 
@@ -28,14 +31,14 @@ The documentation assumes you already have a locally running singularity registr
 
 Build the CentOS 7 rpm files if they don't already exist using the `build-rpms.sh` script (saves to local `rpms` directory).
 
-```
+```console
 $ ./build-rpms.sh
 ...
 INFO: packages have been built sucessfully
--rw-r--r--  1 stealey  staff   241K Mar  9 14:39 singularity-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 stealey  staff   438K Mar  9 14:39 singularity-debuginfo-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 stealey  staff    65K Mar  9 14:39 singularity-devel-2.4.2-1.el7.centos.x86_64.rpm
--rw-r--r--  1 stealey  staff   156K Mar  9 14:39 singularity-runtime-2.4.2-1.el7.centos.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   265K Dec 13 14:24 singularity-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   512K Dec 13 14:24 singularity-debuginfo-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx    72K Dec 13 14:24 singularity-devel-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   195K Dec 13 14:24 singularity-runtime-2.6.1-1.el7.x86_64.rpm
 ```
 
 ### Build
@@ -43,7 +46,7 @@ INFO: packages have been built sucessfully
 Build the docker image named `sregistry.cli:latest`
 
 ```
-$ docker build -t sregistry.cli:latest .
+docker build -t sregistry.cli:latest .
 ```
 
 ### Running
@@ -51,12 +54,12 @@ $ docker build -t sregistry.cli:latest .
 Recall the Token that was generated from the registry
 
 ```json
-{ 
-  "registry": 
-  { 
-    "token": "6bc217c3afc17a3eb6056fd223937585964dd824", 
-    "username": "mjstealey", 
-    "base": "http://nginx" 
+{
+  "registry":
+  {
+    "token": "09e94fd84b435b838a002b8ceab77ad63ea90962",
+    "username": "mjstealey",
+    "base": "http://host.docker.internal:8080"
   }
 }
 ```
@@ -70,7 +73,7 @@ The attributes to use our local registry can be injected into the new container 
 ```
 
 - **NOTE**: The value for **REGISTRY_BASE** may need to be altered to accomodate being run on the localhost over port 8080.   
-    - **macOS**: `REGISTRY_BASE=http://docker.for.mac.localhost:8080`
+    - **macOS**: `REGISTRY_BASE=http://host.docker.internal:8080`
     - **Linux**: `REGISTRY_BASE=http://192.168.0.1:8080` # IP of `docker0` from host
 - **NOTE**: In order to execute `singularity` calls the container needs to run with elevated privilege (`--privileged`).
 - **NOTE**: The `sregistry-cli` container may not be able to locally resolve the address `http://nginx` and the user will need to manually add this to the container's `/etc/hosts` file.
@@ -83,9 +86,9 @@ docker run --rm -ti \
   --name sregistry-cli \
   -e SREGISTRY_CLIENT=registry \
   -e SREGISTRY_CLIENT_SECRETS=/home/singularity/.sregistry \
-  -e REGISTRY_TOKEN=6bc217c3afc17a3eb6056fd223937585964dd824 \
+  -e REGISTRY_TOKEN=09e94fd84b435b838a002b8ceab77ad63ea90962 \
   -e REGISTRY_USERNAME=mjstealey \
-  -e REGISTRY_BASE=http://docker.for.mac.localhost:8080 \
+  -e REGISTRY_BASE=http://host.docker.internal:8080 \
   -v $(pwd)/hello-world:/home/singularity/hello-world \
   --privileged \
   sregistry.cli:latest /bin/bash
@@ -93,17 +96,17 @@ docker run --rm -ti \
 
 At this point the `sregistry-cli` container should be running and have landed you as **root** in the `/home/singularity` directory.
 
-```
-[root@a330d06eee29 singularity]# whoami
+```console
+# whoami
 root
-[root@a330d06eee29 singularity]# pwd
+# pwd
 /home/singularity
 ```
 
 If using `http://nginx` as the `DOMAIN_NAME` or `DOMAIN_NAME_HTTP`, verify that you can ping it from the `sregistry-cli` container.
 
-```
-$ ping nginx
+```console
+# ping nginx
 ping: nginx: Name or service not known
 ```
 
@@ -173,8 +176,8 @@ To ensure that the credentials in the `/home/singularity/.sregistry` file are co
 
 Check `--help`:
 
-```
-$ sregistry --help
+```console
+# sregistry --help
 usage: sregistry [-h] [--debug]
                  {version,shell,images,inspect,get,record,add,rm,rmi,search,push,pull,delete}
                  ...
@@ -207,10 +210,10 @@ actions:
 
 Check shell, note placement in `[client|registry]` (This would be `[client|hub]` if we were talking to the official **hub**):
 
-```
-$ sregistry shell
-[client|registry] [database|sqlite:////home/singularity/.singularity/sregistry.db]
-Python 3.6.4 (default, Dec 19 2017, 14:48:12)
+```console
+# sregistry shell
+[client|registry] [database|sqlite:////root/.singularity/sregistry.db]
+Python 3.6.5 (default, Apr 10 2018, 17:08:37)
 [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 (InteractiveConsole)
@@ -229,37 +232,47 @@ From the **My Collections** page, create a new collection: [http://localhost:808
 
 Search for the new collection using the `sregistry` command.
 
-```
-$ sregistry search mjstealey
-[client|registry] [database|sqlite:////home/singularity/.singularity/sregistry.db]
+```console
+# sregistry search mjstealey
+[client|registry] [database|sqlite:////root/.singularity/sregistry.db]
 COLLECTION mjstealey
 ```
 
 ### Create hello-world.simg
 
-An example Singularity definition file has been provided for this example inside of the `hello-world` directory.
+An example Singularity definition file has been provided for this example inside of the `hello-world` directory (as the user `singularity`).
 
-```
+```console
+# su - singularity
+$ id
+uid=1000(singularity) gid=1000(singularity) groups=1000(singularity)
 $ cd hello-world/
 $ ls
 Singularity  rawr.sh
 ```
 
-Build the image
+Build the image 
 
-```
+```console
 $ sudo singularity build hello-world.simg Singularity
+Singularity: image-type (U=0,P=141)> Unknown image format/type: Singularity
+
+Singularity: image-type (U=0,P=141)> Retval = 255
+
 Using container recipe deffile: Singularity
 Sanitizing environment
 Adding base Singularity environment to container
 Docker image path: index.docker.io/library/ubuntu:14.04
 Cache folder set to /root/.singularity/docker
-[5/5] |===================================| 100.0%
-Exploding layer: sha256:99ad4e3ced4d361a0f042c611a6fe5295ed5364287276a96483b80ca85588041.tar.gz
-Exploding layer: sha256:ec5a723f4e2aa55867633696e9763c27fce7b7a143e30b36571a5f9a3142022c.tar.gz
-Exploding layer: sha256:2a175e11567c4a374dd86c53ab8744d9ba21046fbed1fea612d1d37ae0e24afa.tar.gz
-Exploding layer: sha256:8d26426e95e04222aa7782fb871a3beeee110d03b312ed89b428e72c0b747b2c.tar.gz
-Exploding layer: sha256:46e451596b7c64397d1d3c39cd6ea32a055f456fafaf3ce79a92725c9b47e404.tar.gz
+[4/4] |===================================| 100.0%
+Singularity: docker-extract (U=0,P=174)> Provide a single docker tar file to extract
+
+Singularity: docker-extract (U=0,P=174)> Retval = 255
+
+Exploding layer: sha256:aa1a66b8583aebb7079effdfe4f95e93dbad248eb4016d1204b28a1b4daf0be1.tar.gz
+Exploding layer: sha256:aaccc2e362b2a0d1730104c2ec458779bf780014de00161d1844f910e41adbfd.tar.gz
+Exploding layer: sha256:a53116a2808f001c7a5ca43153ddc0ba788204142fe6fd928761d94d6c8e66bb.tar.gz
+Exploding layer: sha256:b3a7298e318c5e03f94da0eb1a7d1aba5c973086135a2063a3088b4035d4d933.tar.gz
 Exploding layer: sha256:c6a9ef4b9995d615851d7786fbc2fe72f72321bee1a87d66919b881a0336525a.tar.gz
 User defined %runscript found! Taking priority.
 Adding files to container
@@ -279,28 +292,51 @@ Cleaning up...
 
 Test the image
 
-```
+```console
 $ ./hello-world.simg
 RaawwWWWWWRRRR!! mjstealey!
 ```
 
 ### Push hello-world.simg to registry
 
+Set `SREGISTRY_CLIENT`
+
+```console
+$ export SREGISTRY_CLIENT=registry
+$ sregistry search
+[client|registry] [database|sqlite:////home/singularity/.singularity/sregistry.db]
+Collections
+```
+
 Check usage
 
-```
+```console
+$ sregistry push --help
 usage: sregistry push [-h] [--tag TAG] --name NAME image
+
+positional arguments:
+  image        full path to image file
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --tag TAG    tag for image. If not provided, defaults to latest
+  --name NAME  name of image, in format "library/image"
 ```
 Push to registry as `mjstealey/hello-world:latest`
 
-```
-$ sregistry push --tag latest --name mjstealey/hello-world hello-world.simg
+```console
+$ sregistry push \
+  --tag latest \
+  --name mjstealey/hello-world \
+  hello-world.simg  
 [client|registry] [database|sqlite:////home/singularity/.singularity/sregistry.db]
-[================================] 67/67 MB - 00:00:00
-[Return status 201 Created]
+
+[1. Collection return status 200 OK]
+[================================] 59/59 MB - 00:00:00
+[Return status 200 Upload Complete]
 ```
 
-Search collection mjstealey
+Search the `mjstealey` collection for the newly pushed image
 
 ```
 $ sregistry search mjstealey
@@ -321,28 +357,31 @@ Also available from the RESTful API [http://localhost:8080/api/#!/collections/co
 
 Using CURL:
 
-```
+```console
 $ curl -X GET \
     --header 'Accept: application/json' \
     --header 'X-CSRFToken: ORWKGmcmhSr9pMU002T6q8hlzCuwsto7JJ45oV8jeJjEUlXox56zeK9nAiMD2WII' \
-    'http://localhost:8080/api/collections/'
+    'http://localhost:8080/api/collections/' | jq .
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   315  100   315    0     0  17015      0 --:--:-- --:--:-- --:--:-- 17500
 {
-  "count":1,
-  "next":null,
-  "previous":null,
-  "results":[
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
     {
-      "id":1,
-      "name":"mjstealey",
-      "add_date":"2018-03-09T14:25:03.089117-06:00",
-      "modify_date":"2018-03-09T15:06:46.564500-06:00",
-      "metadata":{},
-      "containers":[
+      "id": 1,
+      "name": "mjstealey",
+      "add_date": "2018-12-13T13:34:59.246111-06:00",
+      "modify_date": "2018-12-13T13:34:59.269733-06:00",
+      "metadata": {},
+      "containers": [
         {
-          "name":"hello-world",
-          "uri":"mjstealey/hello-world:latest",
-          "detail":"http://nginx/containers/1",
-          "tag":"latest"
+          "detail": "http://nginx/containers/1",
+          "uri": "mjstealey/hello-world:latest",
+          "tag": "latest",
+          "name": "hello-world"
         }
       ]
     }
@@ -354,45 +393,55 @@ $ curl -X GET \
 
 Usage
 
-```
+```console
+$ sregistry pull --help
 usage: sregistry pull [-h] [--name NAME] [--force] [--no-cache] image
+
+positional arguments:
+  image        full uri of image
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --name NAME  custom name for image
+  --force, -f  force overwrite of existing image
+  --no-cache   if storage active, don't add the image to it
 ```
 
 Validate empty local store
 
-```
+```console
 $ sregistry images
-$
+
 ```
 
 Pull image from registry and save to local store
 
-```
+```console
 $ sregistry pull mjstealey/hello-world:latest
 [client|registry] [database|sqlite:////home/singularity/.singularity/sregistry.db]
 Progress |===================================| 100.0%
-[container][new] mjstealey/hello-world:latest
-Success! /home/singularity/.singularity/shub/mjstealey-hello-world:latest.simg
+[container][new] mjstealey/hello-world-latest
+Success! /home/singularity/.singularity/shub/mjstealey-hello-world-latest.simg
 ```
 
 Show image in local store
 
-```
+```console
 $ sregistry images
-Containers:   [date]   [location]  [client]	[uri]
-1  March 10, 2018	local 	   [registry]	mjstealey/hello-world:latest@f6984aa624ed5408a7c423f2df3373ed
+Containers:   [date]   [client]	[uri]
+1  December 13, 2018	   [registry]	mjstealey/hello-world:latest@472de5720652ea9385b4dc21509534e7
 ```
 
 Run image
 
-```
-$ /home/singularity/.singularity/shub/mjstealey-hello-world:latest.simg
-bash: /home/singularity/.singularity/shub/mjstealey-hello-world:latest.simg: Permission denied
+```console
+$ singularity run /home/singularity/.singularity/shub/mjstealey-hello-world-latest.simg
+RaawwWWWWWRRRR!! mjstealey!
 ```
 
-Image pulls without executable flag set... Fix this and try again.
+If image pulls without executable flag set... Fix this and try again.
 
-```
+```console
 $ chmod +x /home/singularity/.singularity/shub/mjstealey-hello-world:latest
 $ /home/singularity/.singularity/shub/mjstealey-hello-world:latest.simg
 RaawwWWWWWRRRR!! mjstealey!
