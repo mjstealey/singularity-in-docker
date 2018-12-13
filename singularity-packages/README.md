@@ -1,16 +1,16 @@
 # Singularity Package Builder
 
-Builds the [Singularity](http://singularity.lbl.gov/install-linux) packages from their [Github source](https://github.com/singularityware/singularity) based on the tag specified as an environment variable named `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.5.1`)
+Builds the [Singularity](http://singularity.lbl.gov/install-linux) packages from their [Github source](https://github.com/singularityware/singularity) based on the tag specified as an environment variable named `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.6.1`)
 
 Supported builds (defaults shown):
 
 - CentOS 7 
-	- `singularity-2.5.1-1.el7.centos.x86_64.rpm`
-	- `singularity-debuginfo-2.5.1-1.el7.centos.x86_64.rpm`
-	- `singularity-devel-2.5.1-1.el7.centos.x86_64.rpm`
-	- `singularity-runtime-2.5.1-1.el7.centos.x86_64.rpm`
+	- `singularity-2.6.1-1.el7.x86_64.rpm`
+	- `singularity-debuginfo-2.6.1-1.el7.x86_64.rpm`
+	- `singularity-devel-2.6.1-1.el7.x86_64.rpm`
+	- `singularity-runtime-2.6.1-1.el7.x86_64.rpm`
 - Ubuntu 16.04
-	- `singularity-container_2.5.1-1_amd64.deb`
+	- `singularity-container_2.6.1-1_amd64.deb`
 
 ## CentOS 7
 
@@ -21,34 +21,33 @@ Builds the Singularity RPMs from source for CentOS 7 using Docker [centos:7](htt
 Build the docker image
 
 ```
-$ cd centos-7/
-$ docker build -t singularity.rpm:latest .
+docker build -t singularity.rpm:latest .
 ```
 
 ### Run the image 
 
-- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.5.1`).
+- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.6.1`).
 - Specify the volume to which you'd like to save the resultant rpm files (maps to `/packages` of the container).
 
 
 **Generate RPMs**:
 
 ```
-$ docker run --rm \
-	-e SINGULARITY_VERSION=2.5.1 \
-	-v $(pwd)/rpms:/packages \
-	singularity.rpm:latest
+docker run --rm \
+  -e SINGULARITY_VERSION=2.6.1 \
+  -v $(pwd)/rpms:/packages \
+  singularity.rpm:latest
 ```
 
 **Verify RPMs**:
 
 ```console
 $ ls -lh $(pwd)/rpms/
-total 2032
--rw-r--r--  1 xxxxx  xxxxx   262K May  9 08:01 singularity-2.5.1-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx   493K May  9 08:01 singularity-debuginfo-2.5.1-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx    69K May  9 08:01 singularity-devel-2.5.1-1.el7.centos.x86_64.rpm
--rw-r--r--  1 xxxxx  xxxxx   181K May  9 08:01 singularity-runtime-2.5.1-1.el7.centos.x86_64.rpm
+total 2112
+-rw-r--r--  1 xxxxx  xxxxx   265K Dec 13 12:28 singularity-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   512K Dec 13 12:28 singularity-debuginfo-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx    72K Dec 13 12:28 singularity-devel-2.6.1-1.el7.x86_64.rpm
+-rw-r--r--  1 xxxxx  xxxxx   195K Dec 13 12:28 singularity-runtime-2.6.1-1.el7.x86_64.rpm
 ```
 
 ## Ubuntu 16.04
@@ -60,13 +59,12 @@ Builds the Singularity DEB files from source for Ubuntu 16.04 (Xenial) using Doc
 Build the docker image
 
 ```
-$ cd ubuntu-16.04/
-$ docker build -t singularity.deb:latest .
+docker build -t singularity.deb:latest .
 ```
 
 ### Run the image 
 
-- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.5.1`).
+- Specify the version of Singularity you wish to build as the environment variable `SINGULARITY_VERSION` (default is `SINGULARITY_VERSION=2.6.1`).
 - Specify the volume to which you'd like to save the resultant deb files (maps to `/packages` of the container).
 
 
@@ -74,7 +72,7 @@ $ docker build -t singularity.deb:latest .
 
 ```
 $ docker run --rm \
-	-e SINGULARITY_VERSION=2.5.1 \
+	-e SINGULARITY_VERSION=2.6.1 \
 	-v $(pwd)/debs:/packages \
 	singularity.deb:latest
 ```
@@ -83,8 +81,8 @@ $ docker run --rm \
 
 ```console
 $ ls -lh $(pwd)/debs/
-total 664
--rw-r--r--  1 xxxxx  xxxxx   329K May  9 08:25 singularity-container_2.5.1_amd64.deb
+total 696
+-rw-r--r--  1 xxxxx  xxxxx   346K Dec 13 12:37 singularity-container_2.6.1-1_amd64.deb
 ```
 
 ## Test Singularity packages using Docker
@@ -98,46 +96,66 @@ Share the generated rpm files to be installed with a new instance of a centos:7 
 - **NOTE**: To use Singularity within a Docker container you must use the `--privileged` Docker option
 
 ```
-$ docker run --rm -ti \
-	-v $(pwd)/rpms:/rpms \
-	--privileged \
-	--name test-rpms \
-	centos:7 /bin/bash
+docker run --rm -ti \
+  -v $(pwd)/rpms:/rpms \
+  --privileged \
+  --name test-rpms \
+  centos:7 /bin/bash
 ```
 
 Install the RPMs from within the container
 
 ```
-# yum -y localinstall \
-	/rpms/singularity-runtime-2.5.1-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-devel-2.5.1-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-debuginfo-2.5.1-1.el7.centos.x86_64.rpm \
-	/rpms/singularity-2.5.1-1.el7.centos.x86_64.rpm
+yum -y localinstall /rpms/singularity-*
 ```
 
 - Should denote the following dependencies also being installed
 
     ```
+    libarchive
     lzo
     squashfs-tools
-    libarchive
     ```
 
 Build the lolcow singularity image.
 
 ```
-# singularity build lolcow.simg docker://godlovedc/lolcow
+singularity build lolcow.simg docker://godlovedc/lolcow
 ```
 
 Run the lolcow image.
 
 ```console
 # ./lolcow.simg
-Singularity: action-suid (U=0,P=126)> USER=root, IMAGE='lolcow.simg', COMMAND='run'
+Singularity: action-suid (U=0,P=124)> USER=root, IMAGE='lolcow.simg', COMMAND='run'
 
  _________________________________________
-/ You will gain money by a speculation or \
-\ lottery.                                /
+/ The Least Successful Collector          \
+|                                         |
+| Betsy Baker played a central role in    |
+| the history of collecting. She was      |
+| employed as a servant in the house of   |
+| John Warburton (1682-1759) who had      |
+| amassed a fine collection of 58 first   |
+| edition plays, including most of the    |
+| works of Shakespeare.                   |
+|                                         |
+| One day Warburton returned home to find |
+| 55 of them charred beyond legibility.   |
+| Betsy had either burned them or used    |
+| them as pie bottoms. The remaining      |
+| three folios are now in the British     |
+| Museum.                                 |
+|                                         |
+| The only comparable literary figure was |
+| the maid who in 1835 burned the         |
+| manuscript of the first volume of       |
+| Thomas Carlyle's "The Hisory of the     |
+| French Revolution", thinking it was     |
+| wastepaper.                             |
+|                                         |
+| -- Stephen Pile, "The Book of Heroic    |
+\ Failures"                               /
  -----------------------------------------
         \   ^__^
          \  (oo)\_______
@@ -154,49 +172,43 @@ Share the generated deb files to be installed with a new instance of a ubuntu:16
 - **NOTE**: To use Singularity within a Docker container you must use the `--privileged` Docker option
 
 ```
-$ docker run --rm -ti \
-	-v $(pwd)/debs:/debs \
-	--privileged \
-	--name test-debs \
-	ubuntu:16.04 /bin/bash
+docker run --rm -ti \
+  -v $(pwd)/debs:/debs \
+  --privileged \
+  --name test-debs \
+  ubuntu:16.04 /bin/bash
 ```
 
 Install the DEB files and prerequisites from within the container.
 
 ```
-# apt-get update -qqq
-# apt-get -y install \
-	ca-certificates \
-	python \
-	squashfs-tools \
-	libarchive13
-# dpkg -i /debs/singularity-container_2.5.1-1_amd64.deb
+apt-get update -qqq
+apt-get -y install \
+  ca-certificates \
+  python \
+  squashfs-tools \
+  libarchive13
+dpkg -i /debs/singularity-*
 ```
 
 Build the lolcow singularity image.
 
 ```
-# singularity build lolcow.simg docker://godlovedc/lolcow
+singularity build lolcow.simg docker://godlovedc/lolcow
 ```
 
 Run the lolcow image.
 
 ```console
 # ./lolcow.simg
-Singularity: action-suid (U=0,P=2834)> Non existent 'bind path' source: '/etc/localtime'
+Singularity: action-suid (U=0,P=2935)> Non existent 'bind path' source: '/etc/localtime'
 
 WARNING: Non existent 'bind path' source: '/etc/localtime'
-Singularity: action-suid (U=0,P=2834)> USER=root, IMAGE='lolcow.simg', COMMAND='run'
+Singularity: action-suid (U=0,P=2935)> USER=root, IMAGE='lolcow.simg', COMMAND='run'
 
- _________________________________
-/ AWAKE! FEAR! FIRE! FOES! AWAKE! \
-|                                 |
-| FEAR! FIRE! FOES!               |
-|                                 |
-| AWAKE! AWAKE!                   |
-|                                 |
-\ -- J. R. R. Tolkien             /
- ---------------------------------
+ ___________________________
+< Condense soup, not books! >
+ ---------------------------
         \   ^__^
          \  (oo)\_______
             (__)\       )\/\
@@ -290,19 +302,8 @@ Container `test-debs`:
 $ docker exec test-debs /lolcow.simg
 WARNING: Non existent 'bind path' source: '/etc/localtime'
  _________________________________________
-/ There is no character, howsoever good   \
-| and fine, but it can be destroyed by    |
-| ridicule, howsoever poor and witless.   |
-| Observe the ass, for instance: his      |
-| character is about perfect, he is the   |
-| choicest spirit among all the humbler   |
-| animals, yet see what ridicule has      |
-| brought him to. Instead of feeling      |
-| complimented when we are called an ass, |
-| we are left in doubt.                   |
-|                                         |
-| -- Mark Twain, "Pudd'nhead Wilson's     |
-\ Calendar"                               /
+/ Today is the tomorrow you worried about \
+\ yesterday.                              /
  -----------------------------------------
         \   ^__^
          \  (oo)\_______

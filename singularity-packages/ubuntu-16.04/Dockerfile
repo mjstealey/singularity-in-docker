@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 MAINTAINER Michael J. Stealey <michael.j.stealey@gmail.com>
 
-ENV SINGULARITY_VERSION=2.4.4
+# Release versions: https://github.com/sylabs/singularity/releases
+ENV SINGULARITY_VERSION=2.6.1
 
 RUN apt-get update && apt-get install -y \
   build-essential \

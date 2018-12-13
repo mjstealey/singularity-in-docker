@@ -1,7 +1,8 @@
 FROM centos:7
 MAINTAINER Michael J. Stealey <michael.j.stealey@gmail.com>
 
-ENV SINGULARITY_VERSION=2.4.4
+# Release versions: https://github.com/sylabs/singularity/releases
+ENV SINGULARITY_VERSION=2.6.1
 
 RUN yum -y install \
   epel-release \
